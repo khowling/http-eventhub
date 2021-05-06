@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: http-eventhub
-          image: khcommon.azurecr.io/http-eventhub:0.2
+          image: khcommon.azurecr.io/http-eventhub:0.1
           env:
             - name: POD_NAME
               valueFrom:

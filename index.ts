@@ -18,7 +18,7 @@ const senderAddress = process.env.SENDER_ADDRESS
 const req_counter = new client.Counter({
     name: 'http_eventhub_requests_total',
     help: 'Counter for total requests received',
-    labelNames: ['route', 'status'],
+    labelNames: ['status'],
     registers: [register]
 });
 
@@ -140,11 +140,11 @@ async function main(): Promise<{ sender: AwaitableSender, connection: Connection
                 link_credit = sender.credit
                 const delivery: Delivery = await sender.send(message);
                 req_duration.observe(Date.now() - start)
-                req_counter.inc({ status: '200', route: req.url })
+                req_counter.inc({ status: '200' })
                 res.end(`[${connection.id}] await sendMessage -> message_id: ${message_id}, Delivery id: ${delivery.id}, settled: ${delivery.settled}`);
             } catch (e) {
                 res.statusCode = 500
-                req_counter.inc({ status: res.statusCode.toString(), route: req.url })
+                req_counter.inc({ status: res.statusCode.toString() })
                 res.end(JSON.stringify(e))
             }
         } else {

@@ -13,9 +13,10 @@ Create a AKS cluster
 Use the AKS deploy cluster wizard here: https://khowling.github.io/aks-deploy-wizard/
 
 Select the following options:
+
     * Operations: I prefer control & commuity opensource soltuions
     * Security: Simple cluster with no additional access limitations
-    * Addon-Details tab, select
+    * Addon-Details Tab, select
         * Run nginx on every node (deploy as Daemonset)
         * Create FQDN URLs for your applications using external-dns
         * Automatically Issue Certificates for HTTPS using cert-manager
@@ -25,16 +26,18 @@ Now run the ```deploy``` and ```post deploy``` commands to create and configure 
 
 ## Build Container
 
+Use ACR Tasks to build container (set $ACR_NAME to your Azure Container Registry
+)
 ```
-az acr build --registry $ACR_NAME --image http-eventhub:0.2 .
+az acr build --registry $ACR_NAME --image http-eventhub:0.1 .
 ```
 
 ## Deploy
 
-Create Eventhub namespace and hub, standard, with 32 patitions, and note down the connection details
+Create Eventhub namespace and hub, Standard, with 32 patitions, and note down the connection details
 
 
-Create aks secret
+Create AKS secret
 
 ```
 kubectl create secret generic http-eventhub-secret \
