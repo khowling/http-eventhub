@@ -38,9 +38,9 @@ Create aks secret
 
 ```
 kubectl create secret generic http-eventhub-secret \
- --from-literal=AMQP_HOST=kh-eh01.servicebus.windows.net \
+ --from-literal=AMQP_HOST=xxx.servicebus.windows.net \
  --from-literal=AMQP_USERNAME=RootManageSharedAccessKey \
- --from-literal=AMQP_PASSWORD=J09A8+iMLx2OjGglW+VxQGdBDHm4fEeM/kocBtXrtPc= \
+ --from-literal=AMQP_PASSWORD=xxx \
  --from-literal=SENDER_ADDRESS=hub1
 ```
 
