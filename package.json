@@ -1,0 +1,19 @@
+{
+  "name": "http-eventhub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@azure/event-hubs": "^5.5.1",
+    "@types/node": "^15.0.1",
+    "prom-client": "^13.1.0"
+  }
+}

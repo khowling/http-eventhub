@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-eventhub
+  labels:
+    app: http-eventhub
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: http-eventhub
+  template:
+    metadata:
+      labels:
+        app: http-eventhub
+    spec:
+      containers:
+        - name: http-eventhub
+          image: khcommon.azurecr.io/http-eventhub:0.2
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: AMQP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: http-eventhub-secret
+                  key: AMQP_HOST
+            - name: AMQP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: http-eventhub-secret
+                  key: AMQP_USERNAME
+            - name: AMQP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: http-eventhub-secret
+                  key: AMQP_PASSWORD
+            - name: SENDER_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: http-eventhub-secret
+                  key: SENDER_ADDRESS
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-eventhub-service
+  labels:
+    app: http-eventhub
+spec:
+  selector:
+    app: http-eventhub
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http-eventhub-ingress
+  labels:
+    app: http-eventhub
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+        - http-eventhub.labhome.biz
+      secretName: tls-secret
+  rules:
+    - host: http-eventhub.labhome.biz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: http-eventhub-service
+                port:
+                  name: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: http-eventhub-servicemonitor
+  # Change this to the namespace the Prometheus instance is running in
+  namespace: monitoring
+  labels:
+    release: monitoring
+    app: http-eventhub
+spec:
+  selector:
+    matchLabels:
+      app: http-eventhub # target gitlab service
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: http
+      interval: 15s
